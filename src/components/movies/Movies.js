@@ -18,7 +18,7 @@ const Movies = () => {
   const imageUrl = "https://image.tmdb.org/t/p/original/";
 
   // get movies from Tmdb api
-  const getMovies = async () => {
+  const getMovies = async (subscribe) => {
     setState((prev) => {
       return { ...prev, loader: true };
     });
@@ -29,20 +29,23 @@ const Movies = () => {
       if (!response.ok) {
         return;
       }
+
       // when getting response from server set loader value false
       setState((prev) => {
         return { ...prev, loader: false };
       });
+
       const moviesArr = await response.json();
 
-      // console.log(response);
-
-      // after getting response set movies state
       setState((prev) => {
-        return { ...prev, movies: moviesArr.results };
+        return { ...prev, movies: [...moviesArr.results] };
       });
+
+      // console.log(response);
+      // after getting response set movies state
     } catch (error) {
       // console.log(error);
+
       // when getting error from server set error true
       setState((prev) => {
         return { ...prev, error: true, loader: false };
@@ -52,11 +55,40 @@ const Movies = () => {
 
   useEffect(() => {
     getMovies();
-  }, []);
+  }, [state.currPage]);
 
   // next movie button
-  const nextMoviesHandler = () => {};
-  const previousMoviesHandler = () => {};
+  const nextMoviesHandler = () => {
+    // create temp arr for update value of pagination
+    let tempArr = [];
+    for (let i = 1; i <= state.pagination.length + 1; i++) {
+      tempArr.push(i);
+      console.log(tempArr);
+    }
+    // update pagination and current page value very time next btn click
+    setState((prev) => {
+      return {
+        ...prev,
+        pagination: [...tempArr],
+        currPage: prev.currPage + 1,
+      };
+    });
+  };
+  const previousMoviesHandler = () => {
+    if (state.currPage !== 1) {
+      setState((prev) => {
+        return { ...prev, currPage: prev.currPage - 1 };
+      });
+    }
+  };
+
+  const currentNumber = (value) => {
+    if (value !== state.currPage) {
+      setState((prev) => {
+        return { ...prev, currPage: value };
+      });
+    }
+  };
 
   return (
     <>
@@ -126,7 +158,7 @@ const Movies = () => {
               <li className="page-item">
                 <a
                   className="page-link"
-                  href="#/"
+                  href="/"
                   onClick={previousMoviesHandler}
                 >
                   Previous
@@ -135,14 +167,17 @@ const Movies = () => {
               {state.pagination.map((item) => {
                 return (
                   <li key={item} className="page-item">
-                    <a className="page-link" href="#/">
+                    <a
+                      className="page-link pointer"
+                      onClick={() => currentNumber(item)}
+                    >
                       {item}
                     </a>
                   </li>
                 );
               })}
               <li className="page-item">
-                <a className="page-link" href="#/" onClick={nextMoviesHandler}>
+                <a className="page-link" href="/" onClick={nextMoviesHandler}>
                   Next
                 </a>
               </li>
