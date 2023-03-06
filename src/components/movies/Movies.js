@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Spinner from "../spinner/Spinner";
 import "./movies.css";
-import { movieUrl } from "../../common/api/api";
+import { movieUrl } from "../../constant/constant";
+import { imageUrl } from "../../constant/constant";
 
 const Movies = () => {
   // initial state
@@ -15,7 +16,6 @@ const Movies = () => {
       error: false,
     };
   });
-  const imageUrl = "https://image.tmdb.org/t/p/original/";
 
   // get movies from Tmdb api
   const getMovies = useCallback(async () => {
@@ -24,12 +24,10 @@ const Movies = () => {
     });
     try {
       const response = await fetch(`${movieUrl}&page=${state.currPage}`);
-      console.log(response);
       // when response.ok is false return
       if (!response.ok) {
         return;
       }
-
       // when getting response from server set loader value false
       setState((prev) => {
         return { ...prev, loader: false };
@@ -56,7 +54,6 @@ const Movies = () => {
   // useeffect
   useEffect(() => {
     getMovies();
-    console.log("useefft");
   }, [getMovies, state.currPage]);
 
   // next movie button
@@ -65,7 +62,6 @@ const Movies = () => {
     let tempArr = [];
     for (let i = 1; i <= state.pagination.length + 1; i++) {
       tempArr.push(i);
-      console.log(tempArr);
     }
     // update pagination and current page value very time next btn click
     setState((prev) => {
