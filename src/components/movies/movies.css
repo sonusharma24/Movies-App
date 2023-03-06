@@ -1,0 +1,64 @@
+
+
+h3{
+    color: #228B22;;
+}
+
+.movies-list {
+    display: flex;
+    flex-wrap: wrap;
+    
+ 
+    justify-content: center;
+}
+
+.movies-card{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+cursor: pointer;
+    margin: 0.5rem;
+    flex: 0 0 40vh;
+    height: 40vh;
+    transition: transform 1s;
+    position: relative;
+ 
+    color: white;
+
+    
+
+}
+.long-font{
+    font-size: 1rem;
+}
+.movies-card:hover{
+    transform: scale(1.1);
+}
+
+.card-top{
+    height: 40vh;
+}
+.card-top img{
+width: 100%;
+height: 100%;
+}
+
+.card-bottom{
+    background-color: #228B22;
+    width: 100%;
+    text-align: center;
+}
+.favorites-btn{
+    position: absolute;
+    bottom: 4rem;
+    
+
+}
+
+/* pagination */
+.pagination-card{
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+

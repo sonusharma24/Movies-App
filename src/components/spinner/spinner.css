@@ -1,0 +1,14 @@
+.spinner{
+
+        height: 10vh;
+    
+        color: wheat;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    
+}
+
+img{
+    width: 50px;
+}
