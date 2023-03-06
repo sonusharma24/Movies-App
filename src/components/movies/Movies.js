@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Spinner from "../spinner/Spinner";
 import "./movies.css";
 import { movieUrl } from "../../common/api/api";
@@ -18,7 +18,7 @@ const Movies = () => {
   const imageUrl = "https://image.tmdb.org/t/p/original/";
 
   // get movies from Tmdb api
-  const getMovies = async (subscribe) => {
+  const getMovies = useCallback(async () => {
     setState((prev) => {
       return { ...prev, loader: true };
     });
@@ -51,11 +51,13 @@ const Movies = () => {
         return { ...prev, error: true, loader: false };
       });
     }
-  };
+  }, [state.currPage]);
 
+  // useeffect
   useEffect(() => {
     getMovies();
-  }, [state.currPage]);
+    console.log("useefft");
+  }, [getMovies, state.currPage]);
 
   // next movie button
   const nextMoviesHandler = () => {
@@ -157,8 +159,7 @@ const Movies = () => {
             <ul className="pagination">
               <li className="page-item">
                 <a
-                  className="page-link"
-                  href="/"
+                  className="page-link pointer"
                   onClick={previousMoviesHandler}
                 >
                   Previous
@@ -177,7 +178,7 @@ const Movies = () => {
                 );
               })}
               <li className="page-item">
-                <a className="page-link" href="/" onClick={nextMoviesHandler}>
+                <a className="page-link pointer" onClick={nextMoviesHandler}>
                   Next
                 </a>
               </li>
