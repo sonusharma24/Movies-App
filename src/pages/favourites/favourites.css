@@ -5,3 +5,7 @@
 .favourites-table{
     padding: 3rem;
 }
+
+.favourites-Genres>li{
+    cursor: pointer;
+}

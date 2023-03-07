@@ -14,6 +14,7 @@ const Movies = () => {
       currPage: 1,
       loader: true,
       error: false,
+      favourites: [],
     };
   });
 
@@ -88,6 +89,26 @@ const Movies = () => {
     }
   };
 
+  // save movies in localstorage
+  const saveMoviesHandler = (movieObj) => {
+    // get old movies data from localstorage
+    let oldData = JSON.parse(localStorage.getItem("movies") || "[]");
+
+    if (state.favourites.includes(movieObj.id)) {
+      oldData = oldData.filter((movie) => movie.id !== movieObj.id);
+    } else {
+      oldData.push(movieObj);
+    }
+    // send movies data in local storage
+    localStorage.setItem("movies", JSON.stringify(oldData));
+
+    // save movies id into favourites state
+    const tempData = oldData.map((movie) => movie.id);
+    setState((prev) => {
+      return { ...prev, favourites: [...tempData] };
+    });
+    console.log(oldData);
+  };
   return (
     <>
       <main>
@@ -138,9 +159,11 @@ const Movies = () => {
                     <button
                       type="button"
                       className="btn btn-primary favorites-btn"
+                      onClick={() => saveMoviesHandler(movieobj)}
                     >
-                      {" "}
-                      Add to Favorites
+                      {state.favourites.includes(movieobj.id)
+                        ? "Remove from Favorites"
+                        : "Add to Favorites"}
                     </button>
                   )}
                 </div>
