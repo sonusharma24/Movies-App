@@ -4,8 +4,10 @@
 
 .favourites-table{
     padding: 3rem;
+    overflow: auto;
 }
 
-.favourites-Genres>li{
+.favourites-Genres>li,
+.page-pointer{
     cursor: pointer;
 }
