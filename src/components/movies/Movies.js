@@ -81,7 +81,7 @@ const Movies = () => {
     }
   };
 
-  const currentNumber = (value) => {
+  const currentPageNumber = (value) => {
     if (value !== state.currPage) {
       setState((prev) => {
         return { ...prev, currPage: value };
@@ -189,7 +189,7 @@ const Movies = () => {
                   <li key={item} className="page-item">
                     <a
                       className="page-link pointer"
-                      onClick={() => currentNumber(item)}
+                      onClick={() => currentPageNumber(item)}
                     >
                       {item}
                     </a>
