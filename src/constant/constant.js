@@ -1,4 +1,4 @@
-export const apiKey = "396b15b12eda3144040cc7cfc7d1dcf3";
+export const apiKey = process.env.MOVIE_API_KEY;
 export const movieUrl = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}`;
 export const imageUrl = "https://image.tmdb.org/t/p/original/";
 export const genreids = {
