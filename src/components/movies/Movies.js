@@ -18,76 +18,114 @@ const Movies = () => {
     };
   });
 
-  // get movies from Tmdb api
-  const getMovies = useCallback(async () => {
-    setState((prev) => {
-      return { ...prev, loader: true };
-    });
-    try {
-      const response = await fetch(`${movieUrl}&page=${state.currPage}`);
-      // when response.ok is false return
-      if (!response.ok) {
-        return;
-      }
-      // when getting response from server set loader value false
-      setState((prev) => {
-        return { ...prev, loader: false };
-      });
-
-      const moviesArr = await response.json();
-
-      setState((prev) => {
-        return { ...prev, movies: [...moviesArr.results] };
-      });
-
-      // console.log(response);
-      // after getting response set movies state
-    } catch (error) {
-      // console.log(error);
-
-      // when getting error from server set error true
-      setState((prev) => {
-        return { ...prev, error: true, loader: false };
-      });
-    }
-  }, [state.currPage]);
-
   // useeffect
   useEffect(() => {
-    getMovies();
-  }, [getMovies, state.currPage]);
+    // get movies from Tmdb api
+    const getMovies = async () => {
+      setState((prev) => {
+        return { ...prev, loader: true };
+      });
+      try {
+        const response = await fetch(`${movieUrl}&page=${state.currPage}`);
+        // when response.ok is false return
+        if (!response.ok) {
+          return;
+        }
+        // when getting response from server set loader value false
+        setState((prev) => {
+          return { ...prev, loader: false };
+        });
 
-  // next movie button
-  const nextMoviesHandler = () => {
-    // create temp arr for update value of pagination
-    let tempArr = [];
-    for (let i = 1; i <= state.pagination.length + 1; i++) {
-      tempArr.push(i);
-    }
-    // update pagination and current page value very time next btn click
+        const moviesArr = await response.json();
+
+        setState((prev) => {
+          return { ...prev, movies: [...moviesArr.results] };
+        });
+
+        // console.log(response);
+        // after getting response set movies state
+      } catch (error) {
+        // console.log(error);
+
+        // when getting error from server set error true
+        setState((prev) => {
+          return { ...prev, error: true, loader: false };
+        });
+      }
+    };
+    getMovies();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const loadMoreMovies = useCallback(async () => {
+    let newPage = state.currPage + 1;
+    const response = await fetch(`${movieUrl}&page=${newPage}`);
+    const data = await response.json();
     setState((prev) => {
       return {
         ...prev,
-        pagination: [...tempArr],
-        currPage: prev.currPage + 1,
+        currPage: newPage,
+        movies: [...state.movies, ...data.results],
+        loader: false,
       };
     });
-  };
-  const previousMoviesHandler = () => {
-    if (state.currPage !== 1) {
-      setState((prev) => {
-        return { ...prev, currPage: prev.currPage - 1 };
-      });
-    }
-  };
 
-  const currentPageNumber = (value) => {
-    if (value !== state.currPage) {
-      setState((prev) => {
-        return { ...prev, currPage: value };
-      });
-    }
-  };
+    console.log(state.movies);
+  }, [state.currPage, state.movies]);
+
+  const callBackFn = useCallback(
+    (entries) => {
+      if (entries[0].isIntersecting) {
+        console.log("intersecting");
+        loadMoreMovies();
+      }
+    },
+    [loadMoreMovies]
+  );
+
+  useEffect(() => {
+    const loader = document.getElementById("infinite-loader");
+    const observer = new IntersectionObserver(callBackFn, { threshold: 1.0 });
+    observer.observe(loader);
+
+    return () => {
+      observer.unobserve(loader);
+    };
+  }, [callBackFn]);
+
+  // load more movies after every first page is render
+
+  // // next movie button
+  // const nextMoviesHandler = () => {
+  //   // create temp arr for update value of pagination
+  //   let tempArr = [];
+  //   for (let i = 1; i <= state.pagination.length + 1; i++) {
+  //     tempArr.push(i);
+  //   }
+  //   // update pagination and current page value very time next btn click
+  //   setState((prev) => {
+  //     return {
+  //       ...prev,
+  //       pagination: [...tempArr],
+  //       currPage: prev.currPage + 1,
+  //     };
+  //   });
+  // };
+  // const previousMoviesHandler = () => {
+  //   if (state.currPage !== 1) {
+  //     setState((prev) => {
+  //       return { ...prev, currPage: prev.currPage - 1 };
+  //     });
+  //   }
+  // };
+
+  // const currentPageNumber = (value) => {
+  //   if (value !== state.currPage) {
+  //     setState((prev) => {
+  //       return { ...prev, currPage: value };
+  //     });
+  //   }
+  // };
 
   // save movies in localstorage
   const saveMoviesHandler = (movieObj) => {
@@ -171,9 +209,15 @@ const Movies = () => {
             })}
           </div>
         )}
+        <div
+          id="infinite-loader"
+          style={{ display: "flex", justifyContent: "center" }}
+        >
+          {state.loader && <Spinner />}
+        </div>
 
         {/* pagination */}
-        <div className="pagination-card">
+        {/* <div className="pagination-card">
           <nav aria-label="Page navigation example">
             <ul className="pagination">
               <li className="page-item">
@@ -203,7 +247,7 @@ const Movies = () => {
               </li>
             </ul>
           </nav>
-        </div>
+        </div> */}
       </main>
     </>
   );
